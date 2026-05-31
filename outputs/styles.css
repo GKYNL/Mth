@@ -314,12 +314,13 @@ h1 {
 
 .write-line {
   position: relative;
-  min-height: 30px;
+  min-height: 28px;
   padding-left: 38px;
   color: #263040;
-  font-family: "Segoe Print", "Comic Sans MS", cursive;
-  font-size: 1rem;
-  line-height: 1.85;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.65;
   white-space: pre-wrap;
 }
 
