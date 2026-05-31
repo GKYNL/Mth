@@ -211,6 +211,10 @@ h1 {
   box-shadow: var(--shadow);
 }
 
+.example-type-block {
+  margin-bottom: 28px;
+}
+
 .example-head {
   display: flex;
   justify-content: space-between;
@@ -223,6 +227,17 @@ h1 {
   margin: 0;
   color: #744604;
   font-size: 1.05rem;
+}
+
+.practice-group {
+  margin-top: 14px;
+}
+
+.practice-group > h3 {
+  margin: 0 0 10px;
+  color: var(--navy);
+  font-size: 1rem;
+  line-height: 1.25;
 }
 
 .replay-button,

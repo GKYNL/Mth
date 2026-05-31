@@ -994,6 +994,35 @@ sections.forEach((section) => {
   section.examples = [section.example, ...(extraExamplesBySection[section.id] || [])];
 });
 
+const questionGroupsBySection = {
+  "two-population-tests": [
+    { label: "Same type practice: one-tailed independent means", questionIndexes: [8] },
+    { label: "Same type practice: two-tailed independent means", questionIndexes: [0, 2, 3] },
+    { label: "Same type practice: paired samples", questionIndexes: [4, 5, 9] },
+    { label: "Same type practice: two proportions", questionIndexes: [6, 7] },
+    { label: "Same type practice: confidence intervals", questionIndexes: [1] }
+  ],
+  "chi-square-independence": [
+    { label: "Same type practice: independence tests", questionIndexes: [0, 2, 3, 5, 6, 9] },
+    { label: "Same type practice: homogeneity tests", questionIndexes: [1, 4, 7, 8] }
+  ],
+  correlation: [
+    { label: "Same type practice: positive significant correlation", questionIndexes: [0, 2, 5, 6, 7, 8] },
+    { label: "Same type practice: negative correlation", questionIndexes: [1, 3, 4] },
+    { label: "Same type practice: weak or non-significant correlation", questionIndexes: [9] }
+  ],
+  regression: [
+    { label: "Same type practice: equation and prediction", questionIndexes: [0, 1, 2, 4, 5, 8] },
+    { label: "Same type practice: residuals", questionIndexes: [7] },
+    { label: "Same type practice: negative slope", questionIndexes: [3, 6, 9] }
+  ],
+  "goodness-of-fit": [
+    { label: "Same type practice: equal expected distribution", questionIndexes: [0, 2] },
+    { label: "Same type practice: unequal expected proportions", questionIndexes: [1, 3, 4, 5, 7, 9] },
+    { label: "Same type practice: reject the claimed distribution", questionIndexes: [6, 8] }
+  ]
+};
+
 const app = document.querySelector("#app");
 const nav = document.querySelector("#topicNav");
 
@@ -1044,6 +1073,96 @@ function drawingBoardMarkup(boardId) {
   `;
 }
 
+function questionCardMarkup(section, question, index) {
+  return `
+    <article class="question-card">
+      <h3>
+        <span>Question ${index + 1}</span>
+        <span class="tag">${escapeHtml(question.tag)}</span>
+      </h3>
+      <p class="question-text">${escapeHtml(question.prompt)}</p>
+      ${tableMarkup(question.table)}
+      ${drawingBoardMarkup(`${section.id}-${index + 1}`)}
+      <button class="answer-toggle" type="button" aria-expanded="false">
+        <span aria-hidden="true">⌄</span>
+        <span>Show answer</span>
+      </button>
+      <div class="answer" hidden>
+        <ol>${renderAnswer(question.answer)}</ol>
+      </div>
+    </article>
+  `;
+}
+
+function groupedExamplesMarkup(section) {
+  const examples = section.examples || [section.example];
+  const groups = questionGroupsBySection[section.id] || [];
+  const usedQuestionIndexes = new Set();
+
+  const exampleBlocks = examples
+    .map((example, exampleIndex) => {
+      const exampleLines = example.steps
+        .map(
+          (step) => `
+            <div class="write-line" data-text="${escapeHtml(step)}">
+              <span class="ink"></span><span class="cursor" aria-hidden="true"></span>
+            </div>
+          `
+        )
+        .join("");
+      const group = groups[exampleIndex] || { label: "Same type practice", questionIndexes: [] };
+      const questionCards = group.questionIndexes
+        .map((questionIndex) => {
+          usedQuestionIndexes.add(questionIndex);
+          return questionCardMarkup(section, section.questions[questionIndex], questionIndex);
+        })
+        .join("");
+
+      return `
+        <div class="example-type-block">
+          <div class="example-panel" data-example>
+            <div class="example-head">
+              <h3>Worked example ${exampleIndex + 1}: ${escapeHtml(example.title || section.title)}</h3>
+              <button class="replay-button" type="button">Replay</button>
+            </div>
+            <p class="question-text">${escapeHtml(example.question)}</p>
+            ${tableMarkup(example.table)}
+            <div class="notebook" aria-live="polite">${exampleLines}</div>
+          </div>
+          ${
+            questionCards
+              ? `
+                <div class="practice-group">
+                  <h3>${escapeHtml(group.label)}</h3>
+                  <div class="question-grid">${questionCards}</div>
+                </div>
+              `
+              : ""
+          }
+        </div>
+      `;
+    })
+    .join("");
+
+  const ungroupedCards = section.questions
+    .map((question, index) => (usedQuestionIndexes.has(index) ? "" : questionCardMarkup(section, question, index)))
+    .join("");
+
+  return `
+    ${exampleBlocks}
+    ${
+      ungroupedCards
+        ? `
+          <div class="practice-group">
+            <h3>Additional practice</h3>
+            <div class="question-grid">${ungroupedCards}</div>
+          </div>
+        `
+        : ""
+    }
+  `;
+}
+
 function render() {
   nav.innerHTML = sections
     .map((section, index) => `<a href="#${section.id}">${index + 1}. ${escapeHtml(section.title)}</a>`)
@@ -1051,55 +1170,7 @@ function render() {
 
   app.innerHTML = sections
     .map((section) => {
-      const questions = section.questions
-        .map(
-          (question, index) => `
-            <article class="question-card">
-              <h3>
-                <span>Question ${index + 1}</span>
-                <span class="tag">${escapeHtml(question.tag)}</span>
-              </h3>
-              <p class="question-text">${escapeHtml(question.prompt)}</p>
-              ${tableMarkup(question.table)}
-              ${drawingBoardMarkup(`${section.id}-${index + 1}`)}
-              <button class="answer-toggle" type="button" aria-expanded="false">
-                <span aria-hidden="true">⌄</span>
-                <span>Show answer</span>
-              </button>
-              <div class="answer" hidden>
-                <ol>${renderAnswer(question.answer)}</ol>
-              </div>
-            </article>
-          `
-        )
-        .join("");
-
-      const examples = section.examples || [section.example];
-      const examplesMarkup = examples
-        .map((example, exampleIndex) => {
-          const exampleLines = example.steps
-            .map(
-              (step) => `
-                <div class="write-line" data-text="${escapeHtml(step)}">
-                  <span class="ink"></span><span class="cursor" aria-hidden="true"></span>
-                </div>
-              `
-            )
-            .join("");
-
-          return `
-            <div class="example-panel" data-example>
-              <div class="example-head">
-                <h3>Worked example ${exampleIndex + 1}: ${escapeHtml(example.title || section.title)}</h3>
-                <button class="replay-button" type="button">Replay</button>
-              </div>
-              <p class="question-text">${escapeHtml(example.question)}</p>
-              ${tableMarkup(example.table)}
-              <div class="notebook" aria-live="polite">${exampleLines}</div>
-            </div>
-          `;
-        })
-        .join("");
+      const sectionBody = groupedExamplesMarkup(section);
 
       return `
         <section class="topic-section" id="${section.id}">
@@ -1111,9 +1182,7 @@ function render() {
             <span class="importance">${escapeHtml(section.importance)}</span>
           </div>
 
-          ${examplesMarkup}
-
-          <div class="question-grid">${questions}</div>
+          ${sectionBody}
         </section>
       `;
     })
