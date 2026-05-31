@@ -509,6 +509,44 @@ h1 {
   font-weight: 700;
 }
 
+.formula-attempt-block {
+  display: grid;
+  gap: 9px;
+}
+
+.formula-attempt-label {
+  color: var(--navy);
+  font-size: 0.92rem;
+  font-weight: 850;
+}
+
+.formula-attempt {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px;
+  border: 1px solid #c8d4e4;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 650;
+  resize: vertical;
+}
+
+.formula-attempt:focus {
+  outline: 3px solid rgba(8, 127, 140, 0.25);
+  border-color: var(--teal);
+}
+
+.formula-attempt:disabled {
+  background: #f8fafc;
+  color: var(--muted);
+}
+
+.reveal-action {
+  width: fit-content;
+}
+
 .quiz-options {
   display: grid;
   gap: 10px;
@@ -575,8 +613,7 @@ h1 {
 }
 
 .formula-pill {
-  display: inline-flex;
-  align-items: center;
+  display: block;
   min-height: 30px;
   margin-top: 4px;
   padding: 4px 8px;
@@ -584,6 +621,7 @@ h1 {
   background: #e7f6f8;
   color: #046875;
   font-weight: 850;
+  overflow-wrap: anywhere;
 }
 
 .quiz-actions {

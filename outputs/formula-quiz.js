@@ -258,12 +258,13 @@ const formulaQuestions = [
 ];
 
 let currentQuestionIndex = 0;
-let score = 0;
-const selectedAnswers = Array(formulaQuestions.length).fill(null);
+const revealedAnswers = Array(formulaQuestions.length).fill(false);
+const formulaAttempts = Array(formulaQuestions.length).fill("");
 
 const quizTitle = document.querySelector("#quizTitle");
 const quizScenario = document.querySelector("#quizScenario");
-const quizOptions = document.querySelector("#quizOptions");
+const formulaAttempt = document.querySelector("#formulaAttempt");
+const showFormulaButton = document.querySelector("#showFormula");
 const quizFeedback = document.querySelector("#quizFeedback");
 const feedbackTitle = document.querySelector("#feedbackTitle");
 const feedbackReason = document.querySelector("#feedbackReason");
@@ -277,62 +278,45 @@ const resetButton = document.querySelector("#resetQuiz");
 
 function renderQuiz() {
   const question = formulaQuestions[currentQuestionIndex];
-  const selectedAnswer = selectedAnswers[currentQuestionIndex];
+  const isRevealed = revealedAnswers[currentQuestionIndex];
+  const revealedCount = revealedAnswers.filter(Boolean).length;
 
-  quizTitle.textContent = question.topic;
+  quizTitle.textContent = `Problem ${currentQuestionIndex + 1}`;
   quizScenario.textContent = question.scenario;
   quizPosition.textContent = `Question ${currentQuestionIndex + 1} of ${formulaQuestions.length}`;
-  quizScore.textContent = `Score: ${score}/${formulaQuestions.length}`;
+  quizScore.textContent = `Revealed: ${revealedCount}/${formulaQuestions.length}`;
+  formulaAttempt.value = formulaAttempts[currentQuestionIndex];
+  formulaAttempt.disabled = isRevealed;
+  showFormulaButton.disabled = isRevealed;
   previousButton.disabled = currentQuestionIndex === 0;
   nextButton.disabled = currentQuestionIndex === formulaQuestions.length - 1;
-
-  quizOptions.innerHTML = "";
-  question.choices.forEach((choice) => {
-    const button = document.createElement("button");
-    button.className = "quiz-option";
-    button.type = "button";
-    button.textContent = choice;
-
-    if (selectedAnswer) {
-      button.disabled = true;
-      if (choice === question.answer) button.classList.add("is-correct");
-      if (choice === selectedAnswer && choice !== question.answer) button.classList.add("is-wrong");
-    }
-
-    button.addEventListener("click", () => selectAnswer(choice));
-    quizOptions.append(button);
-  });
 
   renderFeedback();
 }
 
 function renderFeedback() {
   const question = formulaQuestions[currentQuestionIndex];
-  const selectedAnswer = selectedAnswers[currentQuestionIndex];
 
-  if (!selectedAnswer) {
+  if (!revealedAnswers[currentQuestionIndex]) {
     quizFeedback.hidden = true;
     return;
   }
 
-  const isCorrect = selectedAnswer === question.answer;
-  feedbackTitle.textContent = isCorrect ? "Correct" : `Correct answer: ${question.answer}`;
+  feedbackTitle.textContent = `Use: ${question.answer}`;
   feedbackReason.textContent = question.reason;
   feedbackClue.textContent = `Clue: ${question.clue}`;
-  feedbackFormula.textContent = question.formula;
+  feedbackFormula.textContent = `Formula: ${question.formula}`;
   quizFeedback.hidden = false;
 }
 
-function selectAnswer(choice) {
-  if (selectedAnswers[currentQuestionIndex]) return;
+formulaAttempt.addEventListener("input", () => {
+  formulaAttempts[currentQuestionIndex] = formulaAttempt.value;
+});
 
-  selectedAnswers[currentQuestionIndex] = choice;
-  if (choice === formulaQuestions[currentQuestionIndex].answer) {
-    score += 1;
-  }
-
+showFormulaButton.addEventListener("click", () => {
+  revealedAnswers[currentQuestionIndex] = true;
   renderQuiz();
-}
+});
 
 previousButton.addEventListener("click", () => {
   currentQuestionIndex = Math.max(0, currentQuestionIndex - 1);
@@ -346,8 +330,8 @@ nextButton.addEventListener("click", () => {
 
 resetButton.addEventListener("click", () => {
   currentQuestionIndex = 0;
-  score = 0;
-  selectedAnswers.fill(null);
+  revealedAnswers.fill(false);
+  formulaAttempts.fill("");
   renderQuiz();
 });
 

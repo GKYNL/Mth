@@ -13,9 +13,9 @@
         <h1>Which Problem Uses Which Formula?</h1>
         <div class="priority-strip" aria-label="Formula quiz navigation">
           <a href="./index.html">Back to Problem Bank</a>
-          <span>Read the clue</span>
-          <span>Choose the test</span>
-          <span>Check the formula</span>
+          <span>Read the problem</span>
+          <span>Find the formula</span>
+          <span>Reveal the answer</span>
         </div>
       </div>
       <img
@@ -43,7 +43,18 @@
         </div>
         <h2 id="quizTitle"></h2>
         <p id="quizScenario" class="quiz-scenario"></p>
-        <div class="quiz-options" id="quizOptions"></div>
+        <div class="formula-attempt-block">
+          <label class="formula-attempt-label" for="formulaAttempt">
+            Write the formula you would use before revealing the answer.
+          </label>
+          <textarea
+            id="formulaAttempt"
+            class="formula-attempt"
+            rows="4"
+            placeholder="Example: t = (d̄ - 0) / (sd / √n)"
+          ></textarea>
+          <button class="quiz-action reveal-action" type="button" id="showFormula">Show formula</button>
+        </div>
         <div class="quiz-feedback" id="quizFeedback" hidden>
           <h3 id="feedbackTitle"></h3>
           <p id="feedbackReason"></p>
