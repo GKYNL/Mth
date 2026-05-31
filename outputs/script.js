@@ -938,6 +938,8 @@ function setupDrawingBoards() {
     let tool = "pen";
     let drawing = false;
     let lastPoint = null;
+    let activePointerId = null;
+    const ignoredPointers = new Set();
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
@@ -989,6 +991,35 @@ function setupDrawingBoards() {
       lastPoint = point;
     }
 
+    function isDrawablePointer(event) {
+      if (event.pointerType === "pen" || event.pointerType === "mouse") {
+        return true;
+      }
+
+      // Some browsers report stylus-like input with tiny touch geometry. Large
+      // touch contacts are fingers or palm input and should never draw.
+      if (event.pointerType === "touch") {
+        return event.width <= 8 && event.height <= 8 && event.pressure > 0;
+      }
+
+      return false;
+    }
+
+    function finishPointer(event) {
+      ignoredPointers.delete(event.pointerId);
+
+      if (activePointerId === event.pointerId) {
+        drawing = false;
+        lastPoint = null;
+        activePointerId = null;
+        document.body.classList.remove("is-board-drawing");
+      }
+
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    }
+
     function clearBoard() {
       const rect = canvas.getBoundingClientRect();
       context.clearRect(0, 0, rect.width, rect.height);
@@ -1001,33 +1032,94 @@ function setupDrawingBoards() {
     clearButton.addEventListener("click", clearBoard);
 
     canvas.addEventListener("pointerdown", (event) => {
-      drawing = true;
-      lastPoint = getPoint(event);
+      event.preventDefault();
       canvas.setPointerCapture(event.pointerId);
+
+      if (!isDrawablePointer(event)) {
+        ignoredPointers.add(event.pointerId);
+        return;
+      }
+
+      if (drawing) {
+        ignoredPointers.add(event.pointerId);
+        return;
+      }
+
+      drawing = true;
+      activePointerId = event.pointerId;
+      lastPoint = getPoint(event);
+      document.body.classList.add("is-board-drawing");
       drawTo(lastPoint);
     });
 
     canvas.addEventListener("pointermove", (event) => {
-      if (!drawing) return;
+      event.preventDefault();
+      if (ignoredPointers.has(event.pointerId) || !drawing || activePointerId !== event.pointerId) return;
       drawTo(getPoint(event));
     });
 
     canvas.addEventListener("pointerup", (event) => {
-      drawing = false;
-      lastPoint = null;
-      canvas.releasePointerCapture(event.pointerId);
+      event.preventDefault();
+      finishPointer(event);
     });
 
-    canvas.addEventListener("pointercancel", () => {
+    canvas.addEventListener("pointercancel", (event) => {
+      finishPointer(event);
+    });
+
+    canvas.addEventListener("lostpointercapture", () => {
       drawing = false;
       lastPoint = null;
+      activePointerId = null;
+      document.body.classList.remove("is-board-drawing");
+    });
+
+    ["touchstart", "touchmove", "touchend", "touchcancel"].forEach((eventName) => {
+      canvas.addEventListener(eventName, (event) => event.preventDefault(), { passive: false });
     });
 
     window.addEventListener("resize", resizeCanvas);
   });
 }
 
+function setupIPadPalmGuard() {
+  const platform = navigator.platform || "";
+  const userAgent = navigator.userAgent || "";
+  const isIPad =
+    /iPad/.test(userAgent) ||
+    (platform === "MacIntel" && navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+
+  if (!isIPad) return;
+
+  document.body.classList.add("is-ipad-pencil-mode");
+
+  function blockTouch(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
+  function blockFingerPointer(event) {
+    if (event.pointerType === "touch") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  ["touchstart", "touchmove", "touchend", "touchcancel"].forEach((eventName) => {
+    document.addEventListener(eventName, blockTouch, { capture: true, passive: false });
+  });
+
+  ["pointerdown", "pointermove", "pointerup", "pointercancel"].forEach((eventName) => {
+    document.addEventListener(eventName, blockFingerPointer, { capture: true });
+  });
+
+  document.addEventListener("selectionstart", blockTouch, { capture: true });
+  document.addEventListener("contextmenu", blockTouch, { capture: true });
+}
+
 function wireInteractions() {
+  setupIPadPalmGuard();
+
   document.querySelectorAll(".answer-toggle").forEach((button) => {
     button.addEventListener("click", () => {
       const answer = button.nextElementSibling;
