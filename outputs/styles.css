@@ -526,21 +526,14 @@ h1 {
   text-align: left;
 }
 
-.choice-name,
 .choice-formula {
   display: block;
 }
 
-.choice-name {
-  color: inherit;
-  font-weight: 850;
-}
-
 .choice-formula {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 700;
+  color: inherit;
+  font-size: 0.98rem;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 

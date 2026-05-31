@@ -1,7 +1,7 @@
 const formulaByChoice = {
   "Independent two-mean test": "z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂)",
-  "Independent two-mean one-tailed test": "same two-mean statistic; reject in one tail only",
-  "Independent two-mean two-tailed test": "same two-mean statistic; reject if |z| or |t| is large",
+  "Independent two-mean one-tailed test": "z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂); reject in one tail",
+  "Independent two-mean two-tailed test": "z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂); reject if |stat| > critical",
   "Independent mean confidence interval": "(x̄₁ - x̄₂) ± critical value × √(s₁²/n₁ + s₂²/n₂)",
   "Pooled two-sample t test": "sp² = [(n₁-1)s₁² + (n₂-1)s₂²] / (n₁+n₂-2)",
   "Welch two-sample t test": "t = (x̄₁ - x̄₂) / √(s₁²/n₁ + s₂²/n₂), Welch df",
@@ -17,7 +17,7 @@ const formulaByChoice = {
   "Goodness-of-fit test": "χ² = Σ(O - E)²/E, df = k - 1",
   "Expected frequency in a two-way table": "E = row total × column total / grand total",
   "Chi-square statistic": "χ² = Σ(O - E)²/E",
-  "Goodness-of-fit decision": "compare χ² test statistic with χ² critical value",
+  "Goodness-of-fit decision": "reject H₀ if χ² > χ²critical",
   "Pearson correlation test": "r = Sxy / √(SxxSyy), then t = r√[(n-2)/(1-r²)]",
   "Correlation coefficient": "r = Sxy / √(SxxSyy)",
   "Correlation significance test": "t = r√[(n-2)/(1-r²)], df = n - 2",
@@ -25,7 +25,7 @@ const formulaByChoice = {
   "Simple regression equation": "b = Sxy/Sxx, a = ȳ - bx̄, ŷ = a + bx",
   "Regression slope": "b = Sxy/Sxx",
   "Regression intercept": "a = ȳ - bx̄",
-  "Slope interpretation": "b = predicted change in y for a 1-unit increase in x",
+  "Slope interpretation": "b = Δŷ / Δx",
   "Intercept interpretation": "a = predicted y when x = 0",
   "Pooled standard deviation": "sp = √sp²"
 };
@@ -276,14 +276,11 @@ const nextButton = document.querySelector("#nextQuestion");
 const resetButton = document.querySelector("#resetQuiz");
 
 function appendChoiceText(button, choice) {
-  const name = document.createElement("span");
   const formula = document.createElement("span");
 
-  name.className = "choice-name";
   formula.className = "choice-formula";
-  name.textContent = choice;
   formula.textContent = formulaByChoice[choice] || "";
-  button.append(name, formula);
+  button.append(formula);
 }
 
 function renderQuiz() {
@@ -327,10 +324,10 @@ function renderFeedback() {
   }
 
   const isCorrect = selectedAnswer === question.answer;
-  feedbackTitle.textContent = isCorrect ? "Correct" : `Correct answer: ${question.answer}`;
+  feedbackTitle.textContent = isCorrect ? "Correct" : "Wrong";
   feedbackReason.textContent = question.reason;
   feedbackClue.textContent = `Clue: ${question.clue}`;
-  feedbackFormula.textContent = `Formula: ${formulaByChoice[question.answer]}`;
+  feedbackFormula.textContent = `Correct formula: ${formulaByChoice[question.answer]}`;
   quizFeedback.hidden = false;
 }
 
