@@ -734,7 +734,7 @@ const sections = [
         ]
       },
       {
-        tag: "tam uyum",
+        tag: "perfect fit",
         prompt: "A restaurant expects orders by main dish type to arrive in proportions of 40%, 30%, 20%, and 10%. In 150 orders, the observed frequencies are 60, 45, 30, and 15. Perform a goodness-of-fit test at the 5% significance level.",
         answer: [
           "N=150; expected counts: 60, 45, 30, 15.",
@@ -766,6 +766,233 @@ const sections = [
     ]
   }
 ];
+
+const extraExamplesBySection = {
+  "two-population-tests": [
+    {
+      title: "Two-tailed independent means",
+      question:
+        "A gym compares the weekly calorie burn from two workout programs. For Program A, 36 people have a mean of 68 and a standard deviation of 9. For Program B, 40 people have a mean of 63 and a standard deviation of 8. At the 5% significance level, are the two population means different?",
+      steps: [
+        "The keyword 'different' means this is a two-tailed test, not right-tailed or left-tailed.",
+        "The people in Program A and Program B are separate groups, so this is independent samples.",
+        "The variable is numerical, so we compare two population means.",
+        "Set H₀: μ₁ - μ₂ = 0 and H₁: μ₁ - μ₂ ≠ 0.",
+        "Because n₁ and n₂ are both fairly large, use the two-sample z approximation.",
+        "SE = √(9²/36 + 8²/40) = √(2.25 + 1.60) = 1.96.",
+        "z = [(68 - 63) - 0] / 1.96 = 2.55.",
+        "For α = 0.05 in a two-tailed z test, split α into two tails: 0.025 each.",
+        "Critical values are ±1.96.",
+        "Decision rule: reject H₀ if z < -1.96 or z > 1.96.",
+        "Here 2.55 > 1.96, so reject H₀.",
+        "Conclusion: the two workout programs have significantly different mean calorie burn."
+      ]
+    },
+    {
+      title: "Paired samples",
+      question:
+        "The weights of the same 8 people are measured before and after a diet program. Weight losses, computed as before - after, are 3, 5, 4, 2, 6, 4, 5, and 3 kg. At the 5% significance level, can we say the program produces an average weight loss?",
+      steps: [
+        "The most important clue is 'the same 8 people' before and after.",
+        "That means the observations are matched, so do not use the independent two-sample formula.",
+        "Convert the problem into one sample of differences: d = before - after.",
+        "If the program causes weight loss, the mean difference should be positive.",
+        "Set H₀: μd = 0 and H₁: μd > 0.",
+        "Compute the mean and standard deviation of the differences: d̄ = 4.00 and sd = 1.31.",
+        "Use the paired t statistic: t = (d̄ - 0) / (sd/√n).",
+        "t = 4.00 / (1.31/√8) = 8.64.",
+        "Degrees of freedom are n - 1 = 7.",
+        "For a right-tailed test at α = 0.05, critical t ≈ 1.895.",
+        "Because 8.64 > 1.895, reject H₀.",
+        "Conclusion: the diet program produces a significant average weight loss."
+      ]
+    },
+    {
+      title: "Two proportions",
+      question:
+        "An online course compares the registration conversion rates of two advertising campaigns. Of 200 people who saw Campaign 1, 130 registered. Of 180 people who saw Campaign 2, 90 registered. At the 5% significance level, are the conversion rates different?",
+      steps: [
+        "Here the outcome is categorical: registered or did not register.",
+        "Because the question compares two rates, this is a two-population proportion test.",
+        "The word 'different' means H₁: p₁ - p₂ ≠ 0.",
+        "For a hypothesis test with H₀: p₁ = p₂, use the pooled proportion.",
+        "p̂₁ = 130/200 = 0.65 and p̂₂ = 90/180 = 0.50.",
+        "Pooled p̂ = (130 + 90) / (200 + 180) = 220/380 = 0.579.",
+        "SE = √[p̂(1-p̂)(1/n₁ + 1/n₂)].",
+        "SE = √[0.579×0.421×(1/200 + 1/180)] = 0.0507.",
+        "z = (0.65 - 0.50) / 0.0507 = 2.96.",
+        "Two-tailed α = 0.05 gives critical values ±1.96.",
+        "Because 2.96 > 1.96, reject H₀.",
+        "Conclusion: the two campaigns have significantly different conversion rates."
+      ]
+    },
+    {
+      title: "Confidence interval for μ₁ - μ₂",
+      question:
+        "A delivery company compares daily package counts in two regions. Region 1 has n=50, mean=125, s=15. Region 2 has n=45, mean=118, s=14. Build a 95% confidence interval for μ₁ - μ₂.",
+      steps: [
+        "A confidence interval question is not asking for H₀/H₁ or reject/fail to reject first.",
+        "It asks for a plausible range of values for the population difference.",
+        "The point estimate is the sample difference: x̄₁ - x̄₂ = 125 - 118 = 7.",
+        "Use SE = √(s₁²/n₁ + s₂²/n₂) because the samples are independent.",
+        "SE = √(225/50 + 196/45) = 2.98.",
+        "For a 95% large-sample interval, use z* = 1.96.",
+        "Margin of error = 1.96×2.98 = 5.83.",
+        "CI = estimate ± margin = 7 ± 5.83.",
+        "So the 95% CI is (1.17, 12.83).",
+        "Interpretation: Region 1 is estimated to average between 1.17 and 12.83 more packages per day.",
+        "If a CI for a difference contains 0, the difference is not clearly significant at that confidence level.",
+        "Here 0 is not inside the interval, so the evidence favors a positive difference."
+      ]
+    }
+  ],
+  "chi-square-independence": [
+    {
+      title: "Homogeneity test",
+      question:
+        "A university surveys 100 students at each of three campuses about cafeteria satisfaction. Campus 1: 54 satisfied, 46 not satisfied. Campus 2: 63 satisfied, 37 not satisfied. Campus 3: 70 satisfied, 30 not satisfied. At α=0.05, are the satisfaction distributions the same across campuses?",
+      table: {
+        caption: "Observed frequencies",
+        columns: ["Satisfied", "Not satisfied"],
+        rows: [
+          { label: "Campus 1", values: [54, 46] },
+          { label: "Campus 2", values: [63, 37] },
+          { label: "Campus 3", values: [70, 30] }
+        ]
+      },
+      steps: [
+        "This looks like independence, but the wording is 'are the distributions the same across groups?'",
+        "That wording makes it a chi-square homogeneity test.",
+        "The calculation is the same as independence: compute expected counts and χ².",
+        "H₀: the satisfaction distribution is the same for all campuses.",
+        "H₁: at least one campus has a different distribution.",
+        "Each row total is 100; column totals are 187 and 113; total N = 300.",
+        "Expected counts for each campus are 100×187/300 = 62.33 and 100×113/300 = 37.67.",
+        "Compute χ² = Σ(O - E)²/E across all six cells.",
+        "χ² = 5.480.",
+        "df = (rows - 1)(columns - 1) = (3 - 1)(2 - 1) = 2.",
+        "Critical χ² at α=0.05 and df=2 is 5.991.",
+        "Because 5.480 < 5.991, fail to reject H₀.",
+        "Conclusion: the campus satisfaction distributions are not significantly different."
+      ]
+    }
+  ],
+  "correlation": [
+    {
+      title: "Negative correlation",
+      question:
+        "A fleet manager studies whether used-car resale value decreases as vehicle age increases. Vehicle ages are x: 2,3,5,6,8 and price scores are y: 90,85,78,75,70. Find r, R², and test the correlation at α=0.05.",
+      steps: [
+        "The variables x and y are numerical, and the question asks about relationship, so use correlation.",
+        "Before computing, think about direction: as age increases, price seems to decrease.",
+        "So I expect r to be negative.",
+        "After computing Sxx, Syy, and Sxy, the correlation is r = -0.992.",
+        "The sign tells direction: negative means x increases while y decreases.",
+        "The size tells strength: 0.992 is very close to 1 in absolute value, so it is very strong.",
+        "R² = (-0.992)² = 0.985.",
+        "Interpretation: about 98.5% of the variation in price score is explained by the linear relationship with age.",
+        "For significance, test H₀: ρ = 0 against H₁: ρ ≠ 0 unless the question says one-sided.",
+        "t = r√[(n-2)/(1-r²)] = -13.937 with df = 3.",
+        "Critical values for α=0.05, df=3 are about ±3.182.",
+        "Because |-13.937| > 3.182, reject H₀.",
+        "Conclusion: there is a significant negative linear relationship."
+      ]
+    },
+    {
+      title: "Weak/non-significant correlation",
+      question:
+        "A researcher checks whether coffee consumption is related to short-term memory score. For 6 people, coffee cups are x: 1,2,3,4,5,6 and memory scores are y: 2,6,3,7,4,5. At α=0.05, is the correlation significant?",
+      steps: [
+        "This is still a correlation question because there are paired numerical x and y values.",
+        "The points do not move cleanly upward or downward, so I should expect a weaker r.",
+        "The calculated correlation is r = 0.371.",
+        "R² = 0.138, so only about 13.8% of variation is explained by the linear relationship.",
+        "A nonzero sample r is not automatically significant; we must test it.",
+        "Use H₀: ρ = 0 and H₁: ρ ≠ 0.",
+        "t = r√[(n-2)/(1-r²)] = 0.800 with df = n - 2 = 4.",
+        "Critical values at α=0.05 and df=4 are about ±2.776.",
+        "Because 0.800 is between -2.776 and 2.776, fail to reject H₀.",
+        "Conclusion: the sample does not provide enough evidence of a significant linear correlation.",
+        "This is the key lesson: large-looking positive or negative movement matters, but significance depends on r and sample size."
+      ]
+    }
+  ],
+  "regression": [
+    {
+      title: "Residual",
+      question:
+        "A teacher builds a prediction model for study hours and practice exam scores. Study hours are x: 1,2,3,4,5,6 and scores are y: 10,11,13,14,16,17. Build the model and find the residual for the observation where x=4.",
+      steps: [
+        "This is regression because the question asks for prediction and a residual.",
+        "First build the line ŷ = a + bx.",
+        "Using the data, b = 1.457 and a = 8.400.",
+        "So the regression model is ŷ = 8.400 + 1.457x.",
+        "For x=4, the predicted value is ŷ = 8.400 + 1.457×4 = 14.228.",
+        "The actual observed y at x=4 is 14.",
+        "Residual means actual minus predicted: residual = y - ŷ.",
+        "Residual = 14 - 14.228 = -0.228.",
+        "A negative residual means the actual score was slightly below the model prediction.",
+        "For any residual question, always predict first, then subtract predicted from observed."
+      ]
+    },
+    {
+      title: "Negative slope",
+      question:
+        "A product's quality score is observed to decrease as shelf age increases. Shelf ages are x: 2,4,6,8,10 and quality scores are y: 100,92,85,78,70. Build the regression line and predict the quality score for x=12.",
+      steps: [
+        "This is a regression question because we need an equation and a prediction.",
+        "As x increases, y decreases, so I expect the slope b to be negative.",
+        "Using the regression formulas gives b = -3.70 and a = 107.20.",
+        "The equation is ŷ = 107.20 - 3.70x.",
+        "Interpretation of b: every 1-unit increase in shelf age predicts a 3.70-point decrease in quality.",
+        "For x=12, substitute into the equation.",
+        "ŷ = 107.20 - 3.70×12 = 62.80.",
+        "Conclusion: the predicted quality score at shelf age 12 is 62.80.",
+        "When the slope is negative, do not treat it as an error; it is the model showing a decreasing relationship."
+      ]
+    }
+  ],
+  "goodness-of-fit": [
+    {
+      title: "Unequal expected proportions",
+      question:
+        "A mobile app expects user device types to follow proportions of 20%, 30%, and 50%. In a sample of 100 users, the observed frequencies are 18, 32, and 50. At α=0.05, does the observed distribution fit the expected proportions?",
+      steps: [
+        "This is goodness-of-fit because one categorical variable is being compared to a claimed distribution.",
+        "The expected probabilities are not equal, so do not divide N evenly.",
+        "Convert each expected probability into an expected count using E = n×p.",
+        "Expected counts are 100×0.20 = 20, 100×0.30 = 30, and 100×0.50 = 50.",
+        "Now compare observed and expected with χ² = Σ(O - E)²/E.",
+        "χ² = (18-20)²/20 + (32-30)²/30 + (50-50)²/50.",
+        "χ² = 0.333.",
+        "df = k - 1 = 3 - 1 = 2.",
+        "Critical χ² at α=0.05 and df=2 is 5.991.",
+        "Because 0.333 < 5.991, fail to reject H₀.",
+        "Conclusion: the observed distribution fits the expected proportions."
+      ]
+    },
+    {
+      title: "Rejecting a claimed distribution",
+      question:
+        "An e-commerce site predicts that orders will be distributed across four delivery options in proportions of 40%, 30%, 20%, and 10%. In 100 orders, the observed counts are 35, 25, 20, and 20. At α=0.05, does this distribution fit the expected proportions?",
+      steps: [
+        "Again, this is goodness-of-fit: one categorical variable and a claimed distribution.",
+        "Expected counts are 40, 30, 20, and 10.",
+        "The last category is important: observed is 20 but expected is only 10, so it may drive χ² upward.",
+        "χ² = Σ(O - E)²/E = 11.458.",
+        "df = k - 1 = 4 - 1 = 3.",
+        "Critical χ² at α=0.05 and df=3 is 7.815.",
+        "Because 11.458 > 7.815, reject H₀.",
+        "Conclusion: the observed distribution does not fit the claimed delivery-option proportions.",
+        "The thinking rule: small χ² means good fit; large χ² means the observed counts are too far from expected."
+      ]
+    }
+  ]
+};
+
+sections.forEach((section) => {
+  section.examples = [section.example, ...(extraExamplesBySection[section.id] || [])];
+});
 
 const app = document.querySelector("#app");
 const nav = document.querySelector("#topicNav");
@@ -847,14 +1074,31 @@ function render() {
         )
         .join("");
 
-      const exampleLines = section.example.steps
-        .map(
-          (step) => `
-            <div class="write-line" data-text="${escapeHtml(step)}">
-              <span class="ink"></span><span class="cursor" aria-hidden="true"></span>
+      const examples = section.examples || [section.example];
+      const examplesMarkup = examples
+        .map((example, exampleIndex) => {
+          const exampleLines = example.steps
+            .map(
+              (step) => `
+                <div class="write-line" data-text="${escapeHtml(step)}">
+                  <span class="ink"></span><span class="cursor" aria-hidden="true"></span>
+                </div>
+              `
+            )
+            .join("");
+
+          return `
+            <div class="example-panel" data-example>
+              <div class="example-head">
+                <h3>Worked example ${exampleIndex + 1}: ${escapeHtml(example.title || section.title)}</h3>
+                <button class="replay-button" type="button">Replay</button>
+              </div>
+              <p class="question-text">${escapeHtml(example.question)}</p>
+              ${tableMarkup(example.table)}
+              <div class="notebook" aria-live="polite">${exampleLines}</div>
             </div>
-          `
-        )
+          `;
+        })
         .join("");
 
       return `
@@ -867,15 +1111,7 @@ function render() {
             <span class="importance">${escapeHtml(section.importance)}</span>
           </div>
 
-          <div class="example-panel" data-example>
-            <div class="example-head">
-              <h3>Worked example</h3>
-              <button class="replay-button" type="button">Replay</button>
-            </div>
-            <p class="question-text">${escapeHtml(section.example.question)}</p>
-            ${tableMarkup(section.example.table)}
-            <div class="notebook" aria-live="polite">${exampleLines}</div>
-          </div>
+          ${examplesMarkup}
 
           <div class="question-grid">${questions}</div>
         </section>
@@ -906,11 +1142,9 @@ async function typeLine(line, text, reducedMotion) {
   line.classList.remove("is-writing");
 }
 
-let activeExampleRun = 0;
-
 async function playExample(panel) {
-  activeExampleRun += 1;
-  const runId = activeExampleRun;
+  panel.exampleRunId = (panel.exampleRunId || 0) + 1;
+  const runId = panel.exampleRunId;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const lines = [...panel.querySelectorAll(".write-line")];
 
@@ -920,7 +1154,7 @@ async function playExample(panel) {
   });
 
   for (const line of lines) {
-    if (runId !== activeExampleRun) return;
+    if (runId !== panel.exampleRunId) return;
     await typeLine(line, line.dataset.text || "", reducedMotion);
     await sleep(reducedMotion ? 0 : 80);
   }
