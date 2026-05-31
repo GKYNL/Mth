@@ -44,8 +44,7 @@ body.is-ipad-pencil-mode * {
 }
 
 body.is-ipad-pencil-mode {
-  overscroll-behavior: none;
-  touch-action: none;
+  overscroll-behavior: auto;
 }
 
 button,
