@@ -1093,7 +1093,7 @@ function setupIPadPalmGuard() {
 
   document.body.classList.add("is-ipad-pencil-mode");
 
-  function blockTouch(event) {
+  function blockSelection(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
   }
@@ -1105,16 +1105,12 @@ function setupIPadPalmGuard() {
     }
   }
 
-  ["touchstart", "touchmove", "touchend", "touchcancel"].forEach((eventName) => {
-    document.addEventListener(eventName, blockTouch, { capture: true, passive: false });
-  });
-
   ["pointerdown", "pointermove", "pointerup", "pointercancel"].forEach((eventName) => {
     document.addEventListener(eventName, blockFingerPointer, { capture: true });
   });
 
-  document.addEventListener("selectionstart", blockTouch, { capture: true });
-  document.addEventListener("contextmenu", blockTouch, { capture: true });
+  document.addEventListener("selectionstart", blockSelection, { capture: true });
+  document.addEventListener("contextmenu", blockSelection, { capture: true });
 }
 
 function wireInteractions() {
