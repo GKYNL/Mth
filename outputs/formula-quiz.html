@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Formula Selector Quiz | Statistics Final</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-copy">
+        <p class="eyebrow">Online exam practice</p>
+        <h1>Which Problem Uses Which Formula?</h1>
+        <div class="priority-strip" aria-label="Formula quiz navigation">
+          <a href="./index.html">Back to Problem Bank</a>
+          <span>Read the clue</span>
+          <span>Choose the test</span>
+          <span>Check the formula</span>
+        </div>
+      </div>
+      <img
+        class="study-visual"
+        src="./assets/statistics-study-desk.png"
+        alt="A study desk with a notebook, pencil, and calculator for statistics practice"
+      />
+    </header>
+
+    <main class="content quiz-shell">
+      <section class="formula-guide" aria-labelledby="guideTitle">
+        <h2 id="guideTitle">Fast Decision Order</h2>
+        <ol>
+          <li>Ask what type of variable you have: numerical means, proportions, categories, or paired x-y data.</li>
+          <li>Ask whether there are two independent groups, the same subjects twice, or one table/distribution.</li>
+          <li>Use the wording to choose the tail: "different" means two-tailed; "higher/lower" means one-tailed.</li>
+          <li>Only after the test type is clear, write the formula and compute.</li>
+        </ol>
+      </section>
+
+      <section class="quiz-card" aria-labelledby="quizTitle">
+        <div class="quiz-progress">
+          <span id="quizPosition"></span>
+          <span id="quizScore"></span>
+        </div>
+        <h2 id="quizTitle"></h2>
+        <p id="quizScenario" class="quiz-scenario"></p>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback" hidden>
+          <h3 id="feedbackTitle"></h3>
+          <p id="feedbackReason"></p>
+          <p id="feedbackClue"></p>
+          <span class="formula-pill" id="feedbackFormula"></span>
+        </div>
+        <div class="quiz-actions">
+          <button class="quiz-action" type="button" id="prevQuestion">Previous</button>
+          <button class="quiz-action" type="button" id="nextQuestion">Next</button>
+          <button class="quiz-action" type="button" id="resetQuiz">Reset</button>
+        </div>
+      </section>
+
+      <section class="formula-reference" aria-labelledby="referenceTitle">
+        <h2 id="referenceTitle">High-Yield Formula Map</h2>
+        <div class="reference-grid">
+          <article class="reference-item">
+            <h3>Two independent means</h3>
+            <p>Two separate groups, numerical variable.</p>
+            <span class="math">z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂)</span>
+          </article>
+          <article class="reference-item">
+            <h3>Paired samples</h3>
+            <p>Same people/items measured twice.</p>
+            <span class="math">t = (d̄ - 0) / (sd / √n), df = n - 1</span>
+          </article>
+          <article class="reference-item">
+            <h3>Two proportions</h3>
+            <p>Two rates or percentages are compared.</p>
+            <span class="math">z = (p̂₁ - p̂₂) / √[p̂(1-p̂)(1/n₁ + 1/n₂)]</span>
+          </article>
+          <article class="reference-item">
+            <h3>Chi-square table tests</h3>
+            <p>Two-way table with categorical counts.</p>
+            <span class="math">E = row total × column total / grand total</span>
+          </article>
+          <article class="reference-item">
+            <h3>Goodness of fit</h3>
+            <p>One categorical variable compared to claimed probabilities.</p>
+            <span class="math">χ² = Σ(O - E)²/E, df = k - 1</span>
+          </article>
+          <article class="reference-item">
+            <h3>Correlation and regression</h3>
+            <p>Paired numerical x-y data.</p>
+            <span class="math">r = Sxy / √(SxxSyy), b = Sxy/Sxx, a = ȳ - bx̄</span>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./formula-quiz.js"></script>
+  </body>
+</html>

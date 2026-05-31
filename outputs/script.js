@@ -990,38 +990,79 @@ const extraExamplesBySection = {
   ]
 };
 
+const highProbabilityQuestionIndexesBySection = {
+  "two-population-tests": [0, 1, 2, 4, 5, 6, 7, 8, 9],
+  "chi-square-independence": [0, 1, 4, 6, 8, 9],
+  correlation: [0, 1, 2, 5, 7, 9],
+  regression: [0, 1, 2, 3, 4, 6, 8, 9],
+  "goodness-of-fit": [0, 1, 6, 8]
+};
+
+const highProbabilityExampleIndexesBySection = {
+  "two-population-tests": [0, 1, 2, 3, 4],
+  "chi-square-independence": [0, 1],
+  correlation: [0, 1, 2],
+  regression: [0, 2],
+  "goodness-of-fit": [0, 1, 2]
+};
+
 sections.forEach((section) => {
-  section.examples = [section.example, ...(extraExamplesBySection[section.id] || [])];
+  const keepQuestions = new Set(highProbabilityQuestionIndexesBySection[section.id]);
+  const allExamples = [section.example, ...(extraExamplesBySection[section.id] || [])];
+  const keepExamples = new Set(highProbabilityExampleIndexesBySection[section.id]);
+
+  section.questions = section.questions
+    .map((question, sourceIndex) => ({ ...question, sourceIndex, highProbability: true }))
+    .filter((question) => keepQuestions.has(question.sourceIndex));
+  section.examples = allExamples.filter((_, exampleIndex) => keepExamples.has(exampleIndex));
 });
 
-const questionGroupsBySection = {
+const sourceQuestionGroupsBySection = {
   "two-population-tests": [
     { label: "Same type practice: one-tailed independent means", questionIndexes: [8] },
-    { label: "Same type practice: two-tailed independent means", questionIndexes: [0, 2, 3] },
+    { label: "Same type practice: two-tailed independent means", questionIndexes: [0, 2] },
     { label: "Same type practice: paired samples", questionIndexes: [4, 5, 9] },
     { label: "Same type practice: two proportions", questionIndexes: [6, 7] },
     { label: "Same type practice: confidence intervals", questionIndexes: [1] }
   ],
   "chi-square-independence": [
-    { label: "Same type practice: independence tests", questionIndexes: [0, 2, 3, 5, 6, 9] },
-    { label: "Same type practice: homogeneity tests", questionIndexes: [1, 4, 7, 8] }
+    { label: "Same type practice: independence tests", questionIndexes: [0, 6, 9] },
+    { label: "Same type practice: homogeneity tests", questionIndexes: [1, 4, 8] }
   ],
   correlation: [
-    { label: "Same type practice: positive significant correlation", questionIndexes: [0, 2, 5, 6, 7, 8] },
-    { label: "Same type practice: negative correlation", questionIndexes: [1, 3, 4] },
+    { label: "Same type practice: positive significant correlation", questionIndexes: [0, 2, 5, 7] },
+    { label: "Same type practice: negative correlation", questionIndexes: [1] },
     { label: "Same type practice: weak or non-significant correlation", questionIndexes: [9] }
   ],
   regression: [
-    { label: "Same type practice: equation and prediction", questionIndexes: [0, 1, 2, 4, 5, 8] },
-    { label: "Same type practice: residuals", questionIndexes: [7] },
+    { label: "Same type practice: equation, slope, and prediction", questionIndexes: [0, 1, 2, 4, 8] },
     { label: "Same type practice: negative slope", questionIndexes: [3, 6, 9] }
   ],
   "goodness-of-fit": [
-    { label: "Same type practice: equal expected distribution", questionIndexes: [0, 2] },
-    { label: "Same type practice: unequal expected proportions", questionIndexes: [1, 3, 4, 5, 7, 9] },
-    { label: "Same type practice: reject the claimed distribution", questionIndexes: [6, 8] }
+    { label: "Same type practice: equal expected distribution", questionIndexes: [0, 8] },
+    { label: "Same type practice: unequal expected proportions", questionIndexes: [1] },
+    { label: "Same type practice: reject the claimed distribution", questionIndexes: [6] }
   ]
 };
+
+function buildQuestionGroupsBySection(groupsBySection) {
+  return sections.reduce((result, section) => {
+    const indexBySource = new Map(
+      section.questions.map((question, index) => [question.sourceIndex, index])
+    );
+
+    result[section.id] = (groupsBySection[section.id] || []).map((group) => ({
+      ...group,
+      questionIndexes: group.questionIndexes
+        .map((sourceIndex) => indexBySource.get(sourceIndex))
+        .filter(Number.isInteger)
+    }));
+
+    return result;
+  }, {});
+}
+
+const questionGroupsBySection = buildQuestionGroupsBySection(sourceQuestionGroupsBySection);
 
 const app = document.querySelector("#app");
 const nav = document.querySelector("#topicNav");
@@ -1077,8 +1118,8 @@ function questionCardMarkup(section, question, index) {
   return `
     <article class="question-card">
       <h3>
-        <span>Question ${index + 1}</span>
-        <span class="tag">${escapeHtml(question.tag)}</span>
+        <span><span class="star" aria-label="High probability">★</span> Question ${index + 1}</span>
+        <span class="tag">High yield · ${escapeHtml(question.tag)}</span>
       </h3>
       <p class="question-text">${escapeHtml(question.prompt)}</p>
       ${tableMarkup(question.table)}
