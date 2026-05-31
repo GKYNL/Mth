@@ -1,24 +1,53 @@
+const formulaByChoice = {
+  "Independent two-mean test": "z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂)",
+  "Independent two-mean one-tailed test": "same two-mean statistic; reject in one tail only",
+  "Independent two-mean two-tailed test": "same two-mean statistic; reject if |z| or |t| is large",
+  "Independent mean confidence interval": "(x̄₁ - x̄₂) ± critical value × √(s₁²/n₁ + s₂²/n₂)",
+  "Pooled two-sample t test": "sp² = [(n₁-1)s₁² + (n₂-1)s₂²] / (n₁+n₂-2)",
+  "Welch two-sample t test": "t = (x̄₁ - x̄₂) / √(s₁²/n₁ + s₂²/n₂), Welch df",
+  "Paired t test": "t = (d̄ - 0) / (sd / √n), df = n - 1",
+  "Paired mean confidence interval": "d̄ ± tα/2,df(sd / √n)",
+  "Two-proportion z test": "z = (p̂₁ - p̂₂) / √[p̂(1-p̂)(1/n₁ + 1/n₂)]",
+  "Two-proportion confidence interval": "(p̂₁ - p̂₂) ± zα/2√[p̂₁(1-p̂₁)/n₁ + p̂₂(1-p̂₂)/n₂]",
+  "Two-proportion pooled z test": "z = (p̂₁ - p̂₂) / √[p̂(1-p̂)(1/n₁ + 1/n₂)]",
+  "Pooled proportion": "p̂ = (x₁ + x₂) / (n₁ + n₂)",
+  "Chi-square independence test": "E = row total × column total / grand total; χ² = Σ(O - E)²/E",
+  "Chi-square homogeneity test": "χ² = Σ(O - E)²/E, df = (r - 1)(c - 1)",
+  "Chi-square goodness-of-fit test": "χ² = Σ(O - E)²/E, df = k - 1",
+  "Goodness-of-fit test": "χ² = Σ(O - E)²/E, df = k - 1",
+  "Expected frequency in a two-way table": "E = row total × column total / grand total",
+  "Chi-square statistic": "χ² = Σ(O - E)²/E",
+  "Goodness-of-fit decision": "compare χ² test statistic with χ² critical value",
+  "Pearson correlation test": "r = Sxy / √(SxxSyy), then t = r√[(n-2)/(1-r²)]",
+  "Correlation coefficient": "r = Sxy / √(SxxSyy)",
+  "Correlation significance test": "t = r√[(n-2)/(1-r²)], df = n - 2",
+  "Coefficient of determination": "R² = r²",
+  "Simple regression equation": "b = Sxy/Sxx, a = ȳ - bx̄, ŷ = a + bx",
+  "Regression slope": "b = Sxy/Sxx",
+  "Regression intercept": "a = ȳ - bx̄",
+  "Slope interpretation": "b = predicted change in y for a 1-unit increase in x",
+  "Intercept interpretation": "a = predicted y when x = 0",
+  "Pooled standard deviation": "sp = √sp²"
+};
+
 const formulaQuestions = [
   {
-    topic: "Two population means",
     scenario:
-      "A factory compares average packaging time for Machine A and Machine B. The samples are from different packages, the variable is time in seconds, and the question asks whether the means are different.",
-    answer: "Independent two-mean test",
+      "A gym compares weekly calorie burn from two workout programs. Program A: n=36, x̄=68, s=9. Program B: n=40, x̄=63, s=8. At α=0.05, are the two population means different?",
+    answer: "Independent two-mean two-tailed test",
     choices: [
-      "Independent two-mean test",
+      "Independent two-mean two-tailed test",
       "Paired t test",
       "Two-proportion z test",
       "Chi-square independence test"
     ],
-    clue: "Different groups + numerical measurement + 'different' means a two-tailed comparison of μ₁ and μ₂.",
-    formula: "z or t = [(x̄₁ - x̄₂) - 0] / √(s₁²/n₁ + s₂²/n₂)",
+    clue: "Two separate groups are compared on a numerical variable, and 'different' makes the alternative two-tailed.",
     reason:
-      "Use the independent two-mean formula because each observation belongs to only one group. Do not use paired t unless the same subject is measured twice."
+      "Use a two-population mean test because the response is numerical and the two samples are independent."
   },
   {
-    topic: "One-tailed mean comparison",
     scenario:
-      "Two delivery methods are compared using independent samples of delivery times. The question asks whether Method A has a lower mean time than Method B.",
+      "A factory compares mean packaging time for two machines. Machine A: n=35, x̄=24.3 seconds, s=3.5. Machine B: n=32, x̄=26.1 seconds, s=4.2. At α=0.05, is Machine A's mean time lower?",
     answer: "Independent two-mean one-tailed test",
     choices: [
       "Independent two-mean one-tailed test",
@@ -26,15 +55,13 @@ const formulaQuestions = [
       "Chi-square homogeneity test",
       "Pearson correlation test"
     ],
-    clue: "The word 'lower' sets H₁: μ₁ - μ₂ < 0, so the rejection region is on the left.",
-    formula: "z or t = [(x̄₁ - x̄₂) - 0] / SE",
+    clue: "The samples are independent and the word 'lower' makes H₁ left-tailed.",
     reason:
-      "The formula is still the independent two-mean statistic, but the decision uses a one-tailed critical value."
+      "The calculation is still a two-independent-means statistic, but the rejection region is one-sided."
   },
   {
-    topic: "Small samples with equal variances",
     scenario:
-      "A manufacturer compares durability scores from two independent machines. n₁=12 and n₂=10, and the question says to assume equal population variances.",
+      "A manufacturer studies durability scores for parts from two machines. Machine 1: n=12, x̄=48, s=6. Machine 2: n=10, x̄=42, s=5. Assuming equal variances, test whether the mean durability scores are different.",
     answer: "Pooled two-sample t test",
     choices: [
       "Pooled two-sample t test",
@@ -42,15 +69,13 @@ const formulaQuestions = [
       "Paired t test",
       "Goodness-of-fit test"
     ],
-    clue: "Small independent samples + equal variances means pool the sample variances first.",
-    formula: "sp² = [(n₁-1)s₁² + (n₂-1)s₂²] / (n₁+n₂-2)",
+    clue: "Small independent samples plus the phrase 'assuming equal variances' points to pooled t.",
     reason:
-      "The equal-variance statement is the clue. After finding sp, use SE = sp√(1/n₁ + 1/n₂)."
+      "Pool the variances first, then use the pooled standard error for the two-sample t statistic."
   },
   {
-    topic: "Paired samples",
     scenario:
-      "The same 10 students take a practice exam before and after a review session. The question asks whether the review session increases the mean score.",
+      "The weights of the same 8 people are measured before and after a diet program. Weight losses, before - after, are 3, 5, 4, 2, 6, 4, 5, and 3 kg. Test whether the program produces average weight loss.",
     answer: "Paired t test",
     choices: [
       "Paired t test",
@@ -58,31 +83,27 @@ const formulaQuestions = [
       "Two-proportion z test",
       "Simple regression equation"
     ],
-    clue: "The same students appear twice, so the data become one list of differences.",
-    formula: "t = (d̄ - 0) / (sd / √n), df = n - 1",
+    clue: "The same people are measured twice, so the data are differences.",
     reason:
-      "Do not compare the before group and after group as separate samples. Subtract first, then test the mean difference."
+      "A paired test converts before/after measurements into one sample of differences."
   },
   {
-    topic: "Confidence interval for paired data",
     scenario:
-      "The same employees are measured before and after a training program. The problem asks for a 95% confidence interval for the mean improvement.",
+      "The same 10 employees are measured before and after a training session. The differences, after - before, are 2, -1, 3, 4, 1, 2, 0, 3, 2, and 1. Find a 95% confidence interval for the mean improvement.",
     answer: "Paired mean confidence interval",
     choices: [
       "Paired mean confidence interval",
       "Independent mean confidence interval",
       "Two-proportion confidence interval",
-      "Chi-square goodness of fit"
+      "Chi-square goodness-of-fit test"
     ],
-    clue: "Same people + improvement means use differences d = after - before.",
-    formula: "d̄ ± tα/2,df(sd / √n)",
+    clue: "Same employees before/after means the parameter is μd.",
     reason:
-      "Because the target is μd, the interval is built from the average difference, not from x̄₁ - x̄₂."
+      "Because the target is the mean difference, build the interval from d̄ and sd."
   },
   {
-    topic: "Two proportions",
     scenario:
-      "Two advertising campaigns are compared by registration rates. Campaign 1 has 130 registrations out of 200, and Campaign 2 has 90 registrations out of 180.",
+      "An online course compares two advertising campaigns. Campaign 1: 130 registrations out of 200 viewers. Campaign 2: 90 registrations out of 180 viewers. At α=0.05, are the conversion rates different?",
     answer: "Two-proportion z test",
     choices: [
       "Two-proportion z test",
@@ -90,15 +111,13 @@ const formulaQuestions = [
       "Paired t test",
       "Pearson correlation test"
     ],
-    clue: "Registered/not registered is categorical, and the problem compares two rates.",
-    formula: "z = (p̂₁ - p̂₂) / √[p̂(1-p̂)(1/n₁ + 1/n₂)]",
+    clue: "The outcome is registered/not registered, so this compares two proportions.",
     reason:
-      "For a hypothesis test with H₀: p₁ = p₂, use the pooled p̂ in the standard error."
+      "For a hypothesis test with H₀: p₁ = p₂, the standard error uses the pooled proportion."
   },
   {
-    topic: "Confidence interval for two proportions",
     scenario:
-      "A bank compares the click-through rates of two notification texts and asks for a 95% confidence interval for pA - pB.",
+      "A bank compares click-through rates for two notification texts. Text A: 84 clicks out of 150. Text B: 60 clicks out of 140. Construct a 95% confidence interval for pA - pB.",
     answer: "Two-proportion confidence interval",
     choices: [
       "Two-proportion confidence interval",
@@ -106,15 +125,13 @@ const formulaQuestions = [
       "Independent mean confidence interval",
       "Chi-square independence test"
     ],
-    clue: "It asks for an interval, not a test, so do not pool the proportions.",
-    formula: "(p̂₁ - p̂₂) ± zα/2√[p̂₁(1-p̂₁)/n₁ + p̂₂(1-p̂₂)/n₂]",
+    clue: "It asks for an interval for pA - pB, not a hypothesis test.",
     reason:
-      "Pooling is for the null hypothesis p₁ = p₂. A confidence interval estimates the actual difference."
+      "Confidence intervals for p₁ - p₂ do not use the pooled proportion in the standard error."
   },
   {
-    topic: "Chi-square independence",
     scenario:
-      "One sample of students is classified by study plan status and pass/fail status. The question asks whether the two variables are related.",
+      "An instructor records 120 students by study plan status and pass/fail result. Has plan: 42 passed, 18 failed. No plan: 28 passed, 32 failed. At α=0.05, are study plan and passing status independent?",
     answer: "Chi-square independence test",
     choices: [
       "Chi-square independence test",
@@ -122,15 +139,13 @@ const formulaQuestions = [
       "Chi-square goodness-of-fit test",
       "Two-proportion z test"
     ],
-    clue: "One population/sample + two categorical variables + relationship/independence.",
-    formula: "E = row total × column total / grand total; χ² = Σ(O - E)²/E",
+    clue: "One sample is classified by two categorical variables.",
     reason:
-      "Independence tests whether two categorical variables are associated within one sampled group."
+      "Independence tests whether two categorical variables are related in one population/sample."
   },
   {
-    topic: "Chi-square homogeneity",
     scenario:
-      "A university surveys 100 students from each of three campuses and compares satisfied/not satisfied counts across campuses.",
+      "A university surveys 100 students at each of three campuses about cafeteria satisfaction. Campus 1: 54 satisfied, 46 not satisfied. Campus 2: 63 satisfied, 37 not satisfied. Campus 3: 70 satisfied, 30 not satisfied. Are the satisfaction distributions the same across campuses?",
     answer: "Chi-square homogeneity test",
     choices: [
       "Chi-square homogeneity test",
@@ -138,15 +153,13 @@ const formulaQuestions = [
       "Chi-square goodness-of-fit test",
       "Paired t test"
     ],
-    clue: "Several populations or groups are compared to see whether their category distributions are the same.",
-    formula: "χ² = Σ(O - E)²/E, df = (r - 1)(c - 1)",
+    clue: "Several groups are compared by the same categorical response.",
     reason:
-      "The calculation matches independence, but the wording is homogeneity because separate groups are being compared."
+      "Homogeneity tests whether category distributions are the same across different populations/groups."
   },
   {
-    topic: "Goodness of fit",
     scenario:
-      "A cafeteria claims four drink types are equally preferred. One day of sales gives counts for the four drink types.",
+      "A school cafeteria claims four drink types are equally preferred. In one day, observed sales are 28, 22, 30, and 20. At α=0.05, test whether preferences fit an equal distribution.",
     answer: "Chi-square goodness-of-fit test",
     choices: [
       "Chi-square goodness-of-fit test",
@@ -154,15 +167,13 @@ const formulaQuestions = [
       "Chi-square homogeneity test",
       "Simple regression equation"
     ],
-    clue: "One categorical variable is compared to a claimed distribution.",
-    formula: "χ² = Σ(O - E)²/E, df = k - 1",
+    clue: "One categorical variable is compared to one claimed distribution.",
     reason:
-      "There is no two-way table of two variables. The job is only to compare observed counts with expected counts."
+      "Goodness of fit compares observed counts with expected counts from a claimed distribution."
   },
   {
-    topic: "Goodness of fit with proportions",
     scenario:
-      "An app expects users to be 20% tablet, 30% desktop, and 50% mobile. A sample gives observed counts in those three categories.",
+      "A mobile app expects device types to follow 20% tablet, 30% desktop, and 50% mobile. In 100 users, the observed counts are 18, 32, and 50. Test whether the observed distribution fits the expected proportions.",
     answer: "Chi-square goodness-of-fit test",
     choices: [
       "Chi-square goodness-of-fit test",
@@ -170,15 +181,13 @@ const formulaQuestions = [
       "Chi-square independence test",
       "Pearson correlation test"
     ],
-    clue: "Expected proportions must be converted to expected counts using E = n × p.",
-    formula: "Eᵢ = n × pᵢ, then χ² = Σ(O - E)²/E",
+    clue: "There is one categorical variable and expected proportions for its categories.",
     reason:
-      "This is still one categorical variable. The percentages are the claimed distribution."
+      "Convert each expected proportion to an expected count, then calculate χ²."
   },
   {
-    topic: "Expected frequency",
     scenario:
-      "A 2 by 3 table has row total 60, column total 55, and grand total 130 for one cell. The problem asks for that cell's expected frequency.",
+      "In a chi-square two-way table, one cell has row total 60, column total 55, and grand total 130. Which formula gives that cell's expected frequency?",
     answer: "Expected frequency in a two-way table",
     choices: [
       "Expected frequency in a two-way table",
@@ -186,15 +195,13 @@ const formulaQuestions = [
       "Regression slope",
       "Correlation coefficient"
     ],
-    clue: "A cell in a contingency table uses row total, column total, and grand total.",
-    formula: "E = row total × column total / grand total",
+    clue: "Expected cell counts in contingency tables use row total, column total, and grand total.",
     reason:
-      "This formula belongs to chi-square independence and homogeneity tests."
+      "This expected-frequency formula is used before calculating χ² in independence and homogeneity tests."
   },
   {
-    topic: "Correlation",
     scenario:
-      "A teacher records study hours and quiz scores for each student. The question asks for r, R², and whether the linear relationship is significant.",
+      "A teacher records study hours and quiz scores for 5 students: x = 1, 2, 3, 4, 5 and y = 2, 3, 5, 4, 6. Find r, R², and test whether the linear relationship is significant.",
     answer: "Pearson correlation test",
     choices: [
       "Pearson correlation test",
@@ -202,15 +209,13 @@ const formulaQuestions = [
       "Independent two-mean test",
       "Chi-square independence test"
     ],
-    clue: "Paired numerical x-y data + strength/direction of linear relationship.",
-    formula: "r = Sxy / √(SxxSyy), t = r√[(n-2)/(1-r²)]",
+    clue: "The question asks for r and significance of the linear relationship.",
     reason:
-      "Correlation measures direction and strength. Use regression only when the problem asks for a prediction equation."
+      "Correlation measures strength and direction; the correlation t test checks whether ρ = 0."
   },
   {
-    topic: "R squared",
     scenario:
-      "A problem gives r = 0.90 and asks what percentage of variation in y is explained by the linear relationship with x.",
+      "A correlation problem gives r = 0.90 for training days and productivity. What formula gives the percentage of variation in productivity explained by the linear relationship?",
     answer: "Coefficient of determination",
     choices: [
       "Coefficient of determination",
@@ -218,15 +223,13 @@ const formulaQuestions = [
       "Pooled standard deviation",
       "Chi-square statistic"
     ],
-    clue: "The phrase 'percentage of variation explained' points directly to R².",
-    formula: "R² = r²",
+    clue: "Explained variation in a linear relationship is measured by R².",
     reason:
-      "Square the correlation coefficient and convert to a percentage if the question asks for percent."
+      "Square r to get R²; 0.90² = 0.81 means about 81% explained."
   },
   {
-    topic: "Regression equation",
     scenario:
-      "A store records advertising score x and sales y, then asks for the line ŷ = a + bx and a prediction when x = 7.",
+      "A store records advertising spending scores x = 2, 4, 6, 8, 10 and sales y = 50, 55, 65, 70, 80. Build the line ŷ = a + bx and predict sales when x = 7.",
     answer: "Simple regression equation",
     choices: [
       "Simple regression equation",
@@ -234,15 +237,13 @@ const formulaQuestions = [
       "Paired t test",
       "Chi-square goodness-of-fit test"
     ],
-    clue: "The words line, prediction, slope, or intercept point to regression.",
-    formula: "b = Sxy/Sxx, a = ȳ - bx̄, ŷ = a + bx",
+    clue: "The problem asks for a prediction line and a predicted y value.",
     reason:
-      "Correlation would stop at r and R². Regression builds an equation and substitutes x to predict y."
+      "Regression is used when the goal is to build ŷ = a + bx and make predictions."
   },
   {
-    topic: "Regression slope interpretation",
     scenario:
-      "A regression output gives ŷ = 16.50 + 2.15x. The problem asks what 2.15 means.",
+      "A regression model for technicians and completed jobs is ŷ = 16.50 + 2.15x. The question asks what the number 2.15 means in context.",
     answer: "Slope interpretation",
     choices: [
       "Slope interpretation",
@@ -250,21 +251,19 @@ const formulaQuestions = [
       "Correlation significance test",
       "Goodness-of-fit decision"
     ],
-    clue: "The coefficient multiplying x is b, the slope.",
-    formula: "b = change in predicted y for a 1-unit increase in x",
+    clue: "The coefficient of x is the slope.",
     reason:
-      "Here, each 1-unit increase in x predicts 2.15 more units of y."
+      "The slope tells the predicted change in y when x increases by 1."
   }
 ];
 
 let currentQuestionIndex = 0;
-const revealedAnswers = Array(formulaQuestions.length).fill(false);
-const formulaAttempts = Array(formulaQuestions.length).fill("");
+let score = 0;
+const selectedAnswers = Array(formulaQuestions.length).fill(null);
 
 const quizTitle = document.querySelector("#quizTitle");
 const quizScenario = document.querySelector("#quizScenario");
-const formulaAttempt = document.querySelector("#formulaAttempt");
-const showFormulaButton = document.querySelector("#showFormula");
+const quizOptions = document.querySelector("#quizOptions");
 const quizFeedback = document.querySelector("#quizFeedback");
 const feedbackTitle = document.querySelector("#feedbackTitle");
 const feedbackReason = document.querySelector("#feedbackReason");
@@ -276,47 +275,75 @@ const previousButton = document.querySelector("#prevQuestion");
 const nextButton = document.querySelector("#nextQuestion");
 const resetButton = document.querySelector("#resetQuiz");
 
+function appendChoiceText(button, choice) {
+  const name = document.createElement("span");
+  const formula = document.createElement("span");
+
+  name.className = "choice-name";
+  formula.className = "choice-formula";
+  name.textContent = choice;
+  formula.textContent = formulaByChoice[choice] || "";
+  button.append(name, formula);
+}
+
 function renderQuiz() {
   const question = formulaQuestions[currentQuestionIndex];
-  const isRevealed = revealedAnswers[currentQuestionIndex];
-  const revealedCount = revealedAnswers.filter(Boolean).length;
+  const selectedAnswer = selectedAnswers[currentQuestionIndex];
 
   quizTitle.textContent = `Problem ${currentQuestionIndex + 1}`;
   quizScenario.textContent = question.scenario;
   quizPosition.textContent = `Question ${currentQuestionIndex + 1} of ${formulaQuestions.length}`;
-  quizScore.textContent = `Revealed: ${revealedCount}/${formulaQuestions.length}`;
-  formulaAttempt.value = formulaAttempts[currentQuestionIndex];
-  formulaAttempt.disabled = isRevealed;
-  showFormulaButton.disabled = isRevealed;
+  quizScore.textContent = `Score: ${score}/${formulaQuestions.length}`;
   previousButton.disabled = currentQuestionIndex === 0;
   nextButton.disabled = currentQuestionIndex === formulaQuestions.length - 1;
+
+  quizOptions.innerHTML = "";
+  question.choices.forEach((choice) => {
+    const button = document.createElement("button");
+    button.className = "quiz-option";
+    button.type = "button";
+    appendChoiceText(button, choice);
+
+    if (selectedAnswer) {
+      button.disabled = true;
+      if (choice === question.answer) button.classList.add("is-correct");
+      if (choice === selectedAnswer && choice !== question.answer) button.classList.add("is-wrong");
+    }
+
+    button.addEventListener("click", () => selectAnswer(choice));
+    quizOptions.append(button);
+  });
 
   renderFeedback();
 }
 
 function renderFeedback() {
   const question = formulaQuestions[currentQuestionIndex];
+  const selectedAnswer = selectedAnswers[currentQuestionIndex];
 
-  if (!revealedAnswers[currentQuestionIndex]) {
+  if (!selectedAnswer) {
     quizFeedback.hidden = true;
     return;
   }
 
-  feedbackTitle.textContent = `Use: ${question.answer}`;
+  const isCorrect = selectedAnswer === question.answer;
+  feedbackTitle.textContent = isCorrect ? "Correct" : `Correct answer: ${question.answer}`;
   feedbackReason.textContent = question.reason;
   feedbackClue.textContent = `Clue: ${question.clue}`;
-  feedbackFormula.textContent = `Formula: ${question.formula}`;
+  feedbackFormula.textContent = `Formula: ${formulaByChoice[question.answer]}`;
   quizFeedback.hidden = false;
 }
 
-formulaAttempt.addEventListener("input", () => {
-  formulaAttempts[currentQuestionIndex] = formulaAttempt.value;
-});
+function selectAnswer(choice) {
+  if (selectedAnswers[currentQuestionIndex]) return;
 
-showFormulaButton.addEventListener("click", () => {
-  revealedAnswers[currentQuestionIndex] = true;
+  selectedAnswers[currentQuestionIndex] = choice;
+  if (choice === formulaQuestions[currentQuestionIndex].answer) {
+    score += 1;
+  }
+
   renderQuiz();
-});
+}
 
 previousButton.addEventListener("click", () => {
   currentQuestionIndex = Math.max(0, currentQuestionIndex - 1);
@@ -330,8 +357,8 @@ nextButton.addEventListener("click", () => {
 
 resetButton.addEventListener("click", () => {
   currentQuestionIndex = 0;
-  revealedAnswers.fill(false);
-  formulaAttempts.fill("");
+  score = 0;
+  selectedAnswers.fill(null);
   renderQuiz();
 });
 

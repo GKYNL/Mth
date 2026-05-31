@@ -509,44 +509,6 @@ h1 {
   font-weight: 700;
 }
 
-.formula-attempt-block {
-  display: grid;
-  gap: 9px;
-}
-
-.formula-attempt-label {
-  color: var(--navy);
-  font-size: 0.92rem;
-  font-weight: 850;
-}
-
-.formula-attempt {
-  width: 100%;
-  min-height: 110px;
-  padding: 12px;
-  border: 1px solid #c8d4e4;
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--ink);
-  font: inherit;
-  font-weight: 650;
-  resize: vertical;
-}
-
-.formula-attempt:focus {
-  outline: 3px solid rgba(8, 127, 140, 0.25);
-  border-color: var(--teal);
-}
-
-.formula-attempt:disabled {
-  background: #f8fafc;
-  color: var(--muted);
-}
-
-.reveal-action {
-  width: fit-content;
-}
-
 .quiz-options {
   display: grid;
   gap: 10px;
@@ -561,8 +523,25 @@ h1 {
   background: #ffffff;
   color: var(--navy);
   cursor: pointer;
-  font-weight: 800;
   text-align: left;
+}
+
+.choice-name,
+.choice-formula {
+  display: block;
+}
+
+.choice-name {
+  color: inherit;
+  font-weight: 850;
+}
+
+.choice-formula {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .quiz-option:hover {
@@ -584,9 +563,17 @@ h1 {
   color: var(--green);
 }
 
+.quiz-option.is-correct .choice-formula {
+  color: var(--green);
+}
+
 .quiz-option.is-wrong {
   border-color: rgba(179, 58, 58, 0.52);
   background: #fff0f0;
+  color: var(--red);
+}
+
+.quiz-option.is-wrong .choice-formula {
   color: var(--red);
 }
 
